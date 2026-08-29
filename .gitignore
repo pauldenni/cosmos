@@ -1,0 +1,17 @@
+.DS_Store
+.obsidian/workspace*.json
+.obsidian/cache
+.obsidian/.trash/
+
+# Local machine state — never commit
+.claude/settings.local.json
+.cosmos/cache/
+
+# Local-only personal content adopters may add
+sources/recordings/
+inbox/private/
+
+# Editor / OS junk
+*.swp
+*.tmp
+*~
