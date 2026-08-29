@@ -8,6 +8,8 @@ Prepare for something coming up — a 1:1, a recurring meeting, weekly reflectio
 /prep <person>          1:1 with that person
 /prep <meeting>         named recurring meeting (e.g. weekly-product, weekly-pmo)
 /prep calibration <person>   PM leveling assessment vs. the TPM career ladder
+/prep calibration self  self-assessment vs. the ladder, for your own level
+/prep growth-plan       next-cycle personal development plan (quarterly)
 /prep reflect           weekly professional reflection (CoS voice, work-focused)
 /prep goal-plan         next-cycle work goal proposal
 /prep day today         orient for today — calendar + cosmos context for the day ahead
@@ -19,12 +21,13 @@ Prepare for something coming up — a 1:1, a recurring meeting, weekly reflectio
 `<person>` is matched against `people/*.md` filenames.
 `<meeting>` is matched against `reference/templates/prep-<meeting>.md`. If no specific template exists, fall back to `prep-meeting.md`.
 `calibration <person>` — the first token `calibration` selects the mode; the remainder is the person, matched against `people/*.md` (e.g. `/prep calibration alex`). This produces a leveling assessment, not a 1:1.
+`calibration self` — `self` (or `me`) selects the self-assessment variant, which rates the operator rather than a report. Different template, different voice, different output path.
 
 ---
 
 ## Output contract
 
-Prep artifacts obey `.cosmos/instructions/output-contract.md`. **Caps: 1:1 prep 400 words, meeting prep 400, reflect 500, life-reflect 500, day plan 400, calibration 600.**
+Prep artifacts obey `.cosmos/instructions/output-contract.md`. **Caps: 1:1 prep 400 words, meeting prep 400, reflect 500, life-reflect 500, day plan 400, calibration 600, self-calibration 600, growth-plan 400.**
 
 Three rules matter most here, because prep is where they were violated worst:
 
@@ -109,7 +112,7 @@ Run the `sync-freshness` skill with the in-scope file set the pre-flight already
 python3 .claude/skills/sync-freshness/check_freshness.py <in-scope files/globs ...>
 ```
 
-Scope by mode: `<person>` and `calibration <person>` — their 1:1s, notes mentioning them, their owned entities. `<meeting>` — attendee notes plus the meeting's programs and risks. `reflect` and `goal-plan` — the whole portfolio.
+Scope by mode: `<person>` and `calibration <person>` — their 1:1s, notes mentioning them, their owned entities. `calibration self` and `growth-plan` — the operator's owned entities, weekly reflections, and prior calibrations. `<meeting>` — attendee notes plus the meeting's programs and risks. `reflect` and `goal-plan` — the whole portfolio.
 
 **The three-state verdict is defined in the skill.** The script gives the facts; the ◑-versus-⚠ materiality call is yours.
 
@@ -138,7 +141,7 @@ A manager's evidence-based leveling assessment against the TPM career ladder —
 **Read — in this order:**
 
 1. `reference/org/pm-career-ladder.md` — the rubric. Every rating is *against this*. Resolve the person's **current level** from their `people/<person>.md` role/title and rate against *that level's* expectations (not the level above).
-2. `reference/org/pm-calibration-template.md` — the structure to fill. Copy its sections verbatim; do not improvise the shape.
+2. `reference/org/pm-calibration-template-manager.md` — the structure to fill. Copy its sections verbatim; do not improvise the shape.
 3. `people/<person>.md` — role, level, ownership areas, and the Leadership Notes arc.
 4. `journal/meetings/1on1s/<person>/` — **all** files, full history, most recent first. Calibration is longitudinal — read the whole arc, not just the last 3. The trajectory and "change since last calibration" reads depend on it.
 5. `journal/meetings/*` — other meetings this person led or materially shaped (evidence for Autonomy / Influence / People Impact).
@@ -151,6 +154,55 @@ A manager's evidence-based leveling assessment against the TPM career ladder —
 **Evidence discipline — mandatory.** Every five-axis and competency-cluster rating must cite specific evidence (a 1:1, a decision they owned, an artifact they produced, an org-health observation). If the record doesn't support a defensible rating, mark **Insufficient Evidence** — that is a valid finding (a calibration *data* gap to close), never a cell to guess. Apply the template's pattern check: 3+ axes *Above* → investigate promotion readiness; 3+ *Below* → calibration concern, find root cause; **2+ Insufficient Evidence → the calibration is not done** — say so explicitly and name what to close (1:1 history, peer input, direct observation).
 
 Produce: a filled calibration artifact copying the template — five-axis assessment, competency clusters, trajectory, promotion readiness, development plan, recommendation — with every rating evidence-cited. It is a working draft; note at the top whether it is a **dry-run** (template/signal test) or a **calibration of record**, defaulting to a working draft the operator finalizes. This is an internal management artifact — the cosmos-vs-work scope rule still applies (no command/tool narration in the artifact).
+
+---
+
+### `/prep calibration self`
+
+The same leveling assessment turned on the operator. cosmos does not assume its user is a manager — an individual contributor holds the same evidence problem about their own work that a manager holds about a report's, and usually with worse recall.
+
+Resolve the operator's **current level** from `CLAUDE.md` frontmatter (`operator`, `role`). If the level is not stated there, ask once rather than guessing — rating against the wrong level invalidates the whole artifact.
+
+**Read — in this order:**
+
+1. `reference/org/pm-career-ladder.md` — the rubric, rated against the operator's *current* level.
+2. `reference/org/pm-calibration-template-self.md` — the structure to fill. Copy its sections verbatim.
+3. `work/ownership-map.md` — what the operator owns. Primary Scope-axis evidence.
+4. `work/risks/*.md`, `work/programs/*.md`, `work/decisions/*.md` — what they own, decide, and carry. Decisions they *made* are Autonomy evidence; decisions they *shaped* for someone else are Influence evidence.
+5. `journal/personal/weekly-reflection/*` — **all** files, most recent first. The longitudinal arc lives here, and self-calibration without it is a mood reading.
+6. `journal/meetings/*` — meetings the operator led or materially shaped.
+7. `journal/briefs/*` — upward output they authored. Evidence for Influence and Managing Up.
+8. `work/org-health.md` — any signal about the operator as a bottleneck or a lever.
+9. `journal/calibrations/*self*` and `*growth-plan*` — prior self-calibration and last cycle's plan, for the delta and for what they said they'd work on.
+
+**Evidence discipline — same rule, harder to hold.** Every rating cites a specific artifact, decision, or meeting. Self-assessment fails in two directions: rating the self-image instead of the record, and discounting real evidence out of modesty. Cite or mark **Insufficient Evidence**. If everything comes out *At*, that is a signal the exercise was not done — say so.
+
+**Voice.** Second person, direct, and honest — the `/scan` register, not the brief register. This is for the operator's eyes. Do not soften a *Below* into a development opportunity, and do not inflate an *Above* the record does not carry.
+
+**Gap typing is mandatory.** Every unevidenced promotion criterion is labeled **Capability**, **Scope**, or **Visibility**. The distinction drives completely different action, and visibility gaps are the ones most often misdiagnosed as capability gaps.
+
+Produce: a filled self-calibration artifact copying the template, every rating evidence-cited, **600 words**. Then name the single highest-leverage thing to change this cycle.
+
+---
+
+### `/prep growth-plan`
+
+Forward-looking only. Where `calibration self` establishes position, this decides the next cycle's moves. Quarterly.
+
+**Read — in this order:**
+
+1. `journal/calibrations/*self*` — most recent self-calibration. This plan acts on its gap list. If none exists, say so and recommend running `/prep calibration self` first.
+2. `journal/calibrations/*growth-plan*` — last cycle's plan, for the retro section and for what did not move.
+3. `reference/org/pm-growth-plan-template.md` — the structure to fill.
+4. `reference/org/pm-career-ladder.md` — target level expectations.
+5. `work/ownership-map.md`, `work/programs/*.md` — current load, and where a stretch opportunity could realistically land.
+6. `journal/personal/weekly-reflection/*` — recent capacity and energy signal.
+
+**Three priorities maximum.** A fourth means none are priorities — cut to three and say what was cut. Each priority names its gap type, an observable definition of done, and a first concrete step.
+
+**Force the two hard sections.** *What I'm explicitly not doing this cycle* and the visibility plan are the sections that make the plan real. Do not leave them empty because they are uncomfortable.
+
+Produce: a filled growth plan copying the template, **400 words**.
 
 ---
 
@@ -324,6 +376,8 @@ A clean list of `/prep` commands for meetings with no artifact yet. One line per
 /prep <person>        → journal/meetings/1on1s/<person>/MMDDYY-<person>-1on1.md
 /prep <meeting>       → journal/meetings/<meeting>/MMDDYY-<meeting>.md
 /prep calibration <person> → journal/calibrations/MMDDYY-<person>-calibration.md
+/prep calibration self → journal/calibrations/MMDDYY-self-calibration.md
+/prep growth-plan     → journal/calibrations/MMDDYY-growth-plan.md
 /prep reflect         → journal/personal/weekly-reflection/MMDDYY-reflect.md
 /prep goal-plan       → journal/personal/goal-plan/MMDDYY-goal-plan.md
 /prep day today       → journal/personal/daily/MMDDYY-day.md  (MMDDYY = today's date)

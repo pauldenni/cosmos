@@ -26,12 +26,13 @@ You write notes anywhere in the vault. The file existing is the signal. `/sync` 
 
 ```
 CLAUDE.md                     the operating instructions Claude loads automatically
+cosmos-setup.html             the setup wizard — generates your CLAUDE.md
 .claude/commands/             the 5 commands
 .claude/skills/               6 skills — deterministic Python, not prose
 .cosmos/instructions/         rules the commands reference
 .cosmos/hooks/                write-logger
 reference/templates/          33 output templates
-reference/org/                PM career ladder + calibration template
+reference/org/                PM career ladder + calibration and growth templates
 ```
 
 ### The skills
@@ -55,11 +56,25 @@ Everything error-prone or deterministic is a script, not an instruction. This is
 
 Open this folder as an Obsidian vault, and open it in Claude Code. `CLAUDE.md` loads automatically.
 
+In Obsidian, enable **Settings → Files & Links → Detect all file extensions** so `cosmos-setup.html` is visible in the sidebar.
+
 ### 2. Tell it who you are
 
-Edit the YAML frontmatter at the top of `CLAUDE.md` — your name, role, org, chain, team, programs, systems, domains. That frontmatter seeds the entity index.
+Two ways. Same result — pick one.
 
-Then:
+**The wizard.** Open `cosmos-setup.html` in a browser. Six steps: you, your leadership chain, your team, your programs and systems, your domains, your primary sources. It outputs three files:
+
+| File | Goes | Why |
+|---|---|---|
+| `CLAUDE.md` | repo root | Required. The operating instructions, with your frontmatter filled in. |
+| `canonical-entity-index.md` | `.cosmos/instructions/` | Seeds the entity index. `/sync` regenerates it from there. |
+| `primary-sources.md` | `.cosmos/instructions/` | The documents `/sync` reads. |
+
+In Chrome or Edge, "Save all to vault" writes the three files directly into the folder you pick. Everywhere else, download each one and drop it in. The wizard is a single static file — it runs entirely client-side and nothing leaves your machine.
+
+The generated `CLAUDE.md` body is identical to the one already in the repo; only the YAML frontmatter is yours. Overwriting the shipped file is expected.
+
+**By hand.** Edit the YAML frontmatter at the top of `CLAUDE.md` — your name, role, org, chain, team, programs, systems, domains. Then:
 
 ```bash
 python3 .claude/skills/canonical-entity-index/rebuild_index.py --write
@@ -67,13 +82,31 @@ python3 .claude/skills/canonical-entity-index/rebuild_index.py --write
 
 ### 3. Add your sources
 
-Edit `.cosmos/instructions/primary-sources.md`. It ships empty with the format documented. Add the documents where decisions actually get made — a doc nobody updates is a liability, not a source.
+The wizard writes this for you. Doing it by hand: edit `.cosmos/instructions/primary-sources.md`, which ships empty with the format documented. Add the documents where decisions actually get made — a doc nobody updates is a liability, not a source.
 
 Requires the Google Drive and/or Atlassian connectors. Without them, `/sync` still works on inbox and journal signal alone.
 
 ### 4. Start writing
 
 Drop notes in `inbox/`. Run `/sync`. That's the whole ritual.
+
+---
+
+## Calibration runs both directions
+
+cosmos does not assume you manage people. The leveling rubric in `reference/org/` works the same whether you are assessing a report or yourself.
+
+| Template | Audience | Filled by |
+|---|---|---|
+| `pm-calibration-template-manager.md` | Managers calibrating a report | `/prep calibration <person>` |
+| `pm-calibration-template-self.md` | Anyone calibrating themselves | `/prep calibration self` |
+| `pm-growth-plan-template.md` | Anyone planning their next cycle | `/prep growth-plan` |
+
+The self template mirrors the manager one axis for axis, deliberately. If you and your manager both fill one in, the divergence *is* the conversation.
+
+All three rate against `reference/org/pm-career-ladder.md`, which ships as a placeholder. Replace it with your org's real ladder first — a generic rubric produces a generic and therefore useless calibration, and until you do, every rating correctly comes back **Insufficient Evidence**.
+
+That verdict is a feature. It also fires when the ladder is real but the record is thin, which means the calibration isn't done — and names the gap to close rather than guessing a rating.
 
 ---
 

@@ -1,10 +1,15 @@
 ---
 type: template
+audience: manager
 related:
   - "[[reference/org/pm-career-ladder]]"
+  - "[[reference/org/pm-calibration-template-self]]"
+  - "[[reference/org/pm-growth-plan-template]]"
 ---
 
-# PM Calibration Template
+# PM Calibration Template — For Managers
+
+**Audience: managers calibrating someone else.** Individual contributors run the same assessment on themselves with [[reference/org/pm-calibration-template-self]], or plan a cycle forward with [[reference/org/pm-growth-plan-template]].
 
 Calibration check against the [[reference/org/pm-career-ladder|TPM Career Ladder]]. Copy this file to `journal/calibrations/MMDDYY-<person>-calibration.md` and fill in.
 

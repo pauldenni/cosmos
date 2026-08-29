@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>cosmos Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0e0f;
+    --surface: #141516;
+    --surface2: #1c1e20;
+    --border: #2a2c2f;
+    --border2: #363a3e;
+    --text: #e8e9ea;
+    --muted: #6b7280;
+    --dim: #3d4147;
+    --accent: #4ade80;
+    --accent-dim: #1a3326;
+    --accent-text: #4ade80;
+    --warn: #fbbf24;
+    --warn-dim: #2d2210;
+    --info: #60a5fa;
+    --info-dim: #0f1e35;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+
+  .logo-mark {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    color: var(--text);
+  }
+
+  .logo-mark span { color: var(--accent); }
+
+  .logo-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 3px;
+    font-family: var(--mono);
+  }
+
+  .nav-step {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 20px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--muted);
+    user-select: none;
+  }
+
+  .nav-step:hover { color: var(--text); background: var(--surface2); }
+  .nav-step.active { color: var(--text); border-left-color: var(--accent); background: var(--surface2); }
+  .nav-step.done { color: var(--accent); }
+  .nav-step.locked { opacity: 0.35; cursor: default; }
+
+  .nav-step-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  .nav-step.done .nav-step-num {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .nav-step.active .nav-step-num {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+
+  .sidebar-footer {
+    padding: 20px 20px 0;
+    margin-top: auto;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--dim);
+    font-family: var(--mono);
+    line-height: 1.8;
+  }
+
+  /* Main */
+  .main {
+    padding: 48px 56px;
+    max-width: 760px;
+  }
+
+  .step-header {
+    margin-bottom: 36px;
+  }
+
+  .step-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .step-title {
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: -0.3px;
+    line-height: 1.3;
+  }
+
+  .step-desc {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 520px;
+  }
+
+  /* Form elements */
+  .field { margin-bottom: 20px; }
+
+  .field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-family: var(--mono);
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--dim);
+    margin-bottom: 6px;
+    font-style: italic;
+  }
+
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  input[type="text"], textarea, select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 9px 12px;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.08);
+  }
+
+  input::placeholder, textarea::placeholder { color: var(--dim); }
+
+  textarea {
+    resize: vertical;
+    min-height: 64px;
+    line-height: 1.5;
+  }
+
+  /* Tag input */
+  .tag-input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .tag-input-wrap input { flex: 1; }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    min-height: 10px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 3px 10px 3px 10px;
+    font-size: 13px;
+    font-family: var(--mono);
+    color: var(--text);
+    animation: tagIn 0.15s ease;
+  }
+
+  @keyframes tagIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+
+  .tag-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.1s;
+  }
+
+  .tag-remove:hover { color: #f87171; }
+
+  /* Source rows */
+  .source-row {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .source-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+
+  .source-bottom { display: flex; gap: 10px; align-items: flex-start; }
+  .source-reading { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+  .source-reading select { min-width: 160px; }
+  .source-reading input { flex: 1; }
+
+  /* Buttons */
+  .btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: all 0.15s;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:hover { border-color: var(--muted); }
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+
+  .btn-primary:hover { background: #6ee7a0; border-color: #6ee7a0; }
+  .btn-primary:disabled { opacity: 0.35; cursor: default; transform: none; }
+
+  .btn-ghost {
+    background: none;
+    border-color: transparent;
+    color: var(--muted);
+    padding: 8px 10px;
+  }
+
+  .btn-ghost:hover { color: #f87171; background: rgba(248,113,113,0.06); border-color: transparent; }
+
+  .btn-full { width: 100%; justify-content: center; }
+
+  .btn-add {
+    border-style: dashed;
+    color: var(--muted);
+    width: 100%;
+    justify-content: center;
+    margin-top: 4px;
+  }
+
+  .btn-add:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
+  /* Nav footer */
+  .step-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .step-progress {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* Output */
+  .output-file {
+    margin-bottom: 28px;
+  }
+
+  .output-file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .output-filename {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .file-badge {
+    font-size: 10px;
+    background: var(--accent-dim);
+    color: var(--accent);
+    border: 1px solid rgba(74,222,128,0.2);
+    border-radius: 3px;
+    padding: 2px 7px;
+    letter-spacing: 0.05em;
+  }
+
+  .output-desc {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  pre {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 18px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.65;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 300px;
+    overflow-y: auto;
+    color: #c9d1d9;
+  }
+
+  pre::-webkit-scrollbar { width: 6px; height: 6px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  .copy-btn { font-size: 12px; }
+  .copy-btn.copied { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
+  .file-actions { display: flex; gap: 6px; }
+
+  .notice-list {
+    margin: 6px 0 0 0;
+    padding-left: 20px;
+    line-height: 1.65;
+  }
+  .notice-list li { margin-bottom: 3px; }
+  .notice-list code {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    background: rgba(255,255,255,0.05);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: #c9d1d9;
+  }
+
+  .save-all-cta { margin-bottom: 24px; }
+  .save-all-cta .btn-primary { padding: 10px 18px; }
+  .cta-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 8px 0 0 0;
+    font-style: italic;
+  }
+
+  /* Notice */
+  .notice {
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .notice.info { background: var(--info-dim); border: 1px solid rgba(96,165,250,0.2); color: #93c5fd; margin-bottom: 16px; }
+  .notice.warn { background: var(--warn-dim); border: 1px solid rgba(251,191,36,0.2); color: #fcd34d; }
+
+  .notice-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* Divider */
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 28px 0;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* Intro */
+  .intro-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin: 24px 0 32px;
+  }
+
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+  .intro-card-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .intro-card-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* Pulse dot */
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">cosm<span>os</span></div>
+      <div class="logo-sub">Setup Wizard</div>
+    </div>
+
+    <nav id="stepNav">
+      <div class="nav-step active" data-step="0" onclick="goStep(0)">
+        <div class="nav-step-num">0</div>
+        <span>Welcome</span>
+      </div>
+      <div class="nav-step locked" data-step="1" onclick="goStep(1)">
+        <div class="nav-step-num">1</div>
+        <span>Identity</span>
+      </div>
+      <div class="nav-step locked" data-step="2" onclick="goStep(2)">
+        <div class="nav-step-num">2</div>
+        <span>Team</span>
+      </div>
+      <div class="nav-step locked" data-step="3" onclick="goStep(3)">
+        <div class="nav-step-num">3</div>
+        <span>Programs</span>
+      </div>
+      <div class="nav-step locked" data-step="4" onclick="goStep(4)">
+        <div class="nav-step-num">4</div>
+        <span>Systems</span>
+      </div>
+      <div class="nav-step locked" data-step="5" onclick="goStep(5)">
+        <div class="nav-step-num">5</div>
+        <span>Sources</span>
+      </div>
+      <div class="nav-step locked" data-step="6" onclick="goStep(6)">
+        <div class="nav-step-num">6</div>
+        <span>Generate</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer" style="margin-top: 40px;">
+      cosmos<br>
+      Chief of Staff<br>
+      Manager Operating System
+    </div>
+  </aside>
+
+  <!-- Main content -->
+  <main class="main" id="mainContent"></main>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────────────────────────
+const state = {
+  step: 0,
+  maxReached: 0,
+  yourName: '', yourRole: '', orgName: '', svp: '', vp: '', director: '', manager: '',
+  teamMembers: [],
+  programs: [],
+  systems: [],
+  domains: [],
+  sources: [{ name: '', url: '', use: '', structure: 'single-doc', start: 'top', depth: '' }]
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function el(id) { return document.getElementById(id); }
+
+function goStep(n) {
+  if (n > state.maxReached) return;
+  state.step = n;
+  renderNav();
+  renderStep();
+}
+
+function next() {
+  state.step++;
+  if (state.step > state.maxReached) state.maxReached = state.step;
+  renderNav();
+  renderStep();
+  window.scrollTo(0, 0);
+}
+
+function prev() {
+  if (state.step > 0) { state.step--; renderNav(); renderStep(); window.scrollTo(0, 0); }
+}
+
+
+
+function addTag(key, val) {
+  val = val.trim();
+  if (val && !state[key].includes(val)) {
+    state[key] = [...state[key], val];
+    renderStep();
+  }
+}
+
+function removeTag(key, idx) {
+  state[key] = state[key].filter((_, i) => i !== idx);
+  renderStep();
+}
+
+function addSource() {
+  state.sources.push({ name: '', url: '', use: '', structure: 'single-doc', start: 'top', depth: '' });
+  renderStep();
+}
+
+function removeSource(idx) {
+  state.sources = state.sources.filter((_, i) => i !== idx);
+  renderStep();
+}
+
+function updateSource(idx, field, val) {
+  state.sources[idx][field] = val;
+}
+
+function copyText(id, btnId) {
+  const text = el(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el(btnId);
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function supportsFileSystemAccess() {
+  return typeof window.showDirectoryPicker === 'function';
+}
+
+function downloadFile(filename, content) {
+  const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function downloadClaude() { downloadFile('CLAUDE.md', genCLAUDE()); }
+function downloadIndex() { downloadFile('canonical-entity-index.md', genIndex()); }
+function downloadPrimarySources() { downloadFile('primary-sources.md', genPrimarySources()); }
+
+async function writeFileToHandle(dirHandle, name, content) {
+  const fileHandle = await dirHandle.getFileHandle(name, { create: true });
+  const writable = await fileHandle.createWritable();
+  await writable.write(content);
+  await writable.close();
+}
+
+async function saveAllToVault(btnId) {
+  if (!supportsFileSystemAccess()) return;
+  const btn = el(btnId);
+  const original = btn.textContent;
+  let root;
+  try {
+    root = await window.showDirectoryPicker({ mode: 'readwrite' });
+  } catch (err) {
+    if (err.name === 'AbortError') return;
+    btn.textContent = 'Permission denied';
+    setTimeout(() => { btn.textContent = original; }, 2500);
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    await writeFileToHandle(root, 'CLAUDE.md', genCLAUDE());
+    const cosmosDir = await root.getDirectoryHandle('.cosmos', { create: true });
+    const instructionsDir = await cosmosDir.getDirectoryHandle('instructions', { create: true });
+    await writeFileToHandle(instructionsDir, 'canonical-entity-index.md', genIndex());
+    await writeFileToHandle(instructionsDir, 'primary-sources.md', genPrimarySources());
+    btn.disabled = false;
+    btn.textContent = `✓ Saved to ${root.name}/`;
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.classList.remove('copied');
+    }, 4000);
+  } catch (err) {
+    console.error(err);
+    btn.disabled = false;
+    btn.textContent = 'Save failed — use Download / Copy below';
+    setTimeout(() => { btn.textContent = original; }, 4000);
+  }
+}
+
+function saveField(key, val) { state[key] = val; }
+
+// ─── Nav render ──────────────────────────────────────────────────────────────
+function renderNav() {
+  document.querySelectorAll('.nav-step').forEach(el => {
+    const s = parseInt(el.dataset.step);
+    el.className = 'nav-step';
+    if (s === state.step) el.classList.add('active');
+    else if (s < state.step) el.classList.add('done');
+    else if (s <= state.maxReached) el.classList.remove('locked');
+    else el.classList.add('locked');
+
+    const num = el.querySelector('.nav-step-num');
+    num.textContent = s < state.step ? '✓' : s;
+  });
+}
+
+// ─── Step content ─────────────────────────────────────────────────────────────
+function tagList(key, placeholder) {
+  const id = `tag_${key}`;
+  return `
+    <div class="tag-input-wrap">
+      <input type="text" id="${id}" placeholder="${placeholder}" onkeydown="if(event.key==='Enter'){addTag('${key}',this.value);this.value=''}" />
+      <button class="btn" onclick="addTag('${key}',el('${id}').value);el('${id}').value=''">Add</button>
+    </div>
+    <div class="tags">
+      ${state[key].map((v,i) => `<span class="tag">[[${v}]]<button class="tag-remove" onclick="removeTag('${key}',${i})">×</button></span>`).join('')}
+    </div>
+  `;
+}
+
+function sourceRows() {
+  return state.sources.map((s, i) => `
+    <div class="source-row">
+      <div class="source-grid">
+        <input type="text" placeholder="Source name" value="${s.name}" oninput="updateSource(${i},'name',this.value)" />
+        <input type="text" placeholder="URL (optional)" value="${s.url}" oninput="updateSource(${i},'url',this.value)" />
+      </div>
+      <div class="source-reading">
+        <select onchange="updateSource(${i},'structure',this.value)" title="Document structure">
+          <option value="single-doc" ${s.structure!=='child-pages'?'selected':''}>Single document</option>
+          <option value="child-pages" ${s.structure==='child-pages'?'selected':''}>Confluence folder (child pages)</option>
+        </select>
+        <select onchange="updateSource(${i},'start',this.value)" ${s.structure==='child-pages'?'disabled':''}>
+          <option value="top" ${s.start==='top'?'selected':''}>Newest at top</option>
+          <option value="bottom" ${s.start==='bottom'?'selected':''}>Newest at bottom</option>
+        </select>
+        <input type="text" placeholder="Read depth (e.g. 4 weeks, 20 slides, 3 entries)" value="${s.depth}" oninput="updateSource(${i},'depth',this.value)" />
+      </div>
+      <div class="source-bottom">
+        <textarea placeholder="Use for: weekly priorities, engineering blockers, rollout status…" oninput="updateSource(${i},'use',this.value)">${s.use}</textarea>
+        <button class="btn btn-ghost" onclick="removeSource(${i})" title="Remove">✕</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── Output generation ────────────────────────────────────────────────────────
+
+// Build a YAML list field. If items is empty, emit `key: []`.
+function ymlList(key, items) {
+  if (!items.length) return `${key}: []`;
+  return `${key}:\n` + items.map(v => `  - "[[${v}]]"`).join('\n');
+}
+
+function ymlString(key, val, wrap) {
+  if (!val) return `${key}: ""`;
+  return wrap ? `${key}: "[[${val}]]"` : `${key}: "${val.replace(/"/g, '\\"')}"`;
+}
+
+// Build the Primary Sources body. If the user provided sources, render them.
+// Otherwise leave the Template + Example structure intact so users can see what to fill in.
+function primarySourcesBody() {
+  const filled = state.sources.filter(s => s.name.trim());
+  if (filled.length === 0) {
+    return [
+      '## Template',
+      '',
+      '\`\`\`md',
+      '## <Source Name>',
+      '',
+      '<URL or location>',
+      '',
+      'Reading:',
+      '  start: top       # top = newest content at beginning; bottom = newest at end',
+      '  depth: 4 weeks   # N weeks | N entries | N slides',
+      '  # structure: child-pages   # uncomment for Confluence folders where each week is a separate child page',
+      '',
+      'Use for:',
+      '- <signal type 1>',
+      '- <signal type 2>',
+      '- <signal type 3>',
+      '\`\`\`',
+      '',
+      '## Example',
+      '',
+      '\`\`\`md',
+      '## Weekly Product Sync',
+      '',
+      "<link to your team's weekly product sync doc>",
+      '',
+      'Reading:',
+      '  start: top',
+      '  depth: 4 weeks',
+      '',
+      'Use for:',
+      '- weekly priorities',
+      '- team-level product updates',
+      '- decisions needed',
+      '- risks and blockers',
+      '\`\`\`',
+    ].join('\n');
+  }
+  return filled.map(s => {
+    const lines = [`## ${s.name.trim()}`];
+    if (s.url.trim()) lines.push('', s.url.trim());
+    lines.push('', 'Reading:');
+    if (s.structure === 'child-pages') {
+      lines.push('  structure: child-pages');
+    } else {
+      lines.push(`  start: ${s.start || 'top'}`);
+    }
+    lines.push(`  depth: ${s.depth.trim() || '<fill in>'}`);
+    if (s.use.trim()) {
+      lines.push('', 'Use for:');
+      s.use.split(/[,\n]/).map(u => u.trim()).filter(Boolean).forEach(u => lines.push(`- ${u}`));
+    }
+    return lines.join('\n');
+  }).join('\n\n');
+}
+
+function genCLAUDE() {
+  const fm = [
+    '---',
+    '# Seeds the canonical entity index (.cosmos/instructions/canonical-entity-index.md).',
+    '# /sync uses these names alongside what is on disk to keep the index current.',
+    ymlString('operator', state.yourName, true),
+    ymlString('role', state.yourRole, false),
+    ymlString('org', state.orgName, false),
+    ymlString('svp', state.svp, true),
+    ymlString('vp', state.vp, true),
+    ymlString('director', state.director, true),
+    ymlString('manager', state.manager, true),
+    ymlList('team_members', state.teamMembers),
+    ymlList('programs', state.programs),
+    ymlList('systems', state.systems),
+    ymlList('domains', state.domains),
+    '---',
+  ].join('\n');
+
+  // Body = the v2 CLAUDE.md, verbatim. Only the YAML frontmatter is dynamic.
+  // Primary Sources are NO LONGER inlined here — v2 moved them to their own
+  // file, .cosmos/instructions/primary-sources.md (see genPrimarySources).
+  return `${fm}
+
+# cosmos — AI-Assisted Chief of Staff Operating System
+
+cosmos is an operational intelligence and leadership synthesis system for leaders and operators. It synthesizes organizational signal, maintains continuity, surfaces risk early, accelerates decisions, and preserves historical context.
+
+It is not a documentation system.
+
+---
+
+# Leadership Philosophy
+
+Act as a Director/VP-level product operations partner.
+
+Do not behave like a note taker, a meeting summarizer, a passive documentation assistant, or a task tracker.
+
+Instead: synthesize, prioritize ruthlessly, surface operational risk, identify ownership gaps, highlight misalignment, and drive decisions.
+
+Outputs are executive-ready, concise, strategic, and operationally useful.
+
+**All output obeys \`.cosmos/instructions/output-contract.md\`.** That file sets word caps, sentence rules, banned constructions, and the single-home rule. It is the authority on length and style. Do not restate its rules elsewhere.
+
+---
+
+# Operational Priorities
+
+Prioritize: decisions · risks · alignment gaps · ownership clarity · delivery confidence · organizational health · cross-team dependencies · executive visibility.
+
+Deprioritize: low-signal chatter · redundant updates · implementation minutiae · stale context · exhaustive status reporting.
+
+---
+
+# Scope — cosmos vs. the work
+
+cosmos is the operating system the operator built to do their work. It is not the work. The work is your organization's product leadership.
+
+Synthesized outputs describe the work. They do not narrate cosmos's own machinery.
+
+## Metadata — keep
+
+These show what is fresh and where it came from:
+
+- Cadence tables with command names as row labels, \`Last Run\` dates, \`Status\` columns
+- Header stamps like \`**Last Updated:** 2026-05-29 (via /sync)\`
+- History audit lines like \`Cadence updated: /sync Last Run = 2026-05-29\`
+- Wikilinks to journal artifacts in command-derived folders
+- Surfacing-source attribution when the source is a work artifact
+
+## Narration — strip
+
+These describe what cosmos itself did:
+
+- cosmos as an agent in prose — "by cosmos", "cosmos sees", "tracked by cosmos". Use "the dashboard", "the decision log", or no referent.
+- Command internals — re-read discipline, tabulation logic, pre-flight steps, archival mechanics
+- cosmos failures, misreads, or fixes
+- Structural mitigations credited to cosmos
+- Skill, settings, or hook updates
+
+Narration belongs in chat receipts, in \`.cosmos/\` and \`.claude/\` files, and in inbox notes the operator writes about cosmos improvements.
+
+## Correction rule
+
+If a cosmos failure produced a wrong work artifact, the correction goes in the artifact as a **work fact** ("Channel Categories decision was made 2026-05-17, documented 2026-05-28"). The mechanism that misread it belongs only in the chat receipt.
+
+## The test
+
+Is this a when/where stamp showing freshness and origin? Keep. Is it narrating what cosmos did, fixed, or failed at? Strip.
+
+Or: would this sentence make sense to a successor who inherited the operator's role but not their cosmos? If yes, it is work.
+
+## Work patterns are not cosmos patterns
+
+If cosmos catches itself misreading a decision, the underlying *work pattern* ("decisions get made verbally but never land in artifacts") is real signal and belongs in scans. The cosmos mechanism that caught it does not.
+
+---
+
+# The Loop
+
+**You write → \`/sync\` propagates → \`/now\`, \`/prep\`, \`/brief\`, \`/scan\` consume.**
+
+the operator writes notes anywhere in the vault. The file existing is the signal.
+
+\`/sync\` reads what he wrote plus the configured primary sources, distills signal, and updates persistent state. It is the only command that writes persistent state.
+
+\`/now\` orients. \`/prep\`, \`/brief\`, \`/scan\` are read-only on persistent state and generate their own artifacts.
+
+Before consuming, \`/prep\` and \`/brief\` run the \`sync-freshness\` skill to check whether in-scope state is stale.
+
+---
+
+# Commands
+
+## \`/now\` — orient and focus
+
+The ADHD prosthetic. Run anytime. Reloads context across work and personal life in under two minutes.
+
+Reads calendar, inbox, work state, home state, recent reflects. Writes \`journal/personal/daily/MMDDYY-now.md\`.
+
+No modes, no arguments.
+
+## \`/sync\` — propagate signal
+
+The only command that writes persistent state. Runs 2–3× per day.
+
+Writes \`work/dashboard.md\`, \`work/org-health.md\`, \`work/ownership-map.md\`, \`work/executive-patterns.md\`, \`work/programs/\`, \`work/risks/\`, \`work/decisions/\`, \`work/goals/\`, \`people/\`, and \`journal/sync-log/MMDDYY-sync.md\`. Writes \`home/\` state when home-tagged inbox notes exist. Archives incorporated inbox notes and resolved entities.
+
+## \`/prep <thing>\` — prepare for what's coming
+
+Read-only on persistent state. Produces an artifact the operator opens in Obsidian and lives in during the event.
+
+Modes: \`<person>\` (1:1) · \`<meeting>\` · \`calibration <person>\` · \`reflect\` · \`goal-plan\` · \`day <today|tomorrow>\` · \`life-reflect\` · \`life-goals\`.
+
+## \`/brief <level> [topic]\` — upward output
+
+Levels: \`vp\`, \`svp\`, \`short\`. Optional topic scopes to a program, person, or initiative.
+
+## \`/scan <mode>\` — internal diagnostic
+
+For the operator's eyes. Blunt and analytical.
+
+Modes: \`risks\` · \`team\` · \`program <name>\` · \`patterns\` · \`retro\` · \`life-patterns\`.
+
+---
+
+# Repository Structure
+
+\`\`\`
+inbox/        capture — work AND home; domains: frontmatter routes signal
+journal/      history — dated artifacts
+  briefs/  scans/  sync-log/  meetings/  personal/  calibrations/
+work/         current state of work
+  dashboard.md  org-health.md  ownership-map.md  executive-patterns.md
+  programs/  goals/  risks/  decisions/  meetings/  org-health/
+home/         current state of personal life
+  dashboard.md  areas/  goals/  intentions/  travel/
+people/       humans — individuals at root, teams/ below
+reference/    stable knowledge — systems/  domains/  templates/
+archive/      done — mirrors source structure
+.cosmos/      instructions, prompts, retrieval, hooks
+.claude/      commands/  skills/
+\`\`\`
+
+---
+
+# Home Extension
+
+The same loop applies to personal life. Source material, vocabulary, and tone differ.
+
+Capture home observations in the unified \`inbox/\` with:
+
+\`\`\`yaml
+domains:
+  - Home
+\`\`\`
+
+\`/sync\` routes those to \`home/\` state. There are no external primary sources on the home side.
+
+**Tone.** Work commands use CoS voice — executive, analytical, second-person assessment of the operator as a professional. Home commands are direct and warmer, written about the operator as a person. No org-health framing, no executive vocabulary, no leadership-trajectory language.
+
+**Life areas** are the home equivalent of \`work/programs/\`: Health · Relationships · Finances · Creative · Home Projects · Rest & Renewal.
+
+There is no \`/brief\` equivalent. Personal life has no upward reporting.
+
+---
+
+# Sources
+
+Configured primary sources, reading hints, and tool selection live in \`.cosmos/instructions/primary-sources.md\`. Read that file during \`/sync\`.
+
+**Priority order:**
+
+1. Inbox notes dated more recently than other sources on the same topic
+2. Configured primary sources
+3. Existing persistent state in \`work/\` and \`people/\`
+4. Latest generated artifacts in \`journal/\`
+5. Recent leadership Slack, email, or escalation threads
+6. Wiki / Confluence roadmap pages
+
+**Inbox conflict resolution.** A more recent inbox note wins. \`supersedes_source: true\` is an explicit override. If dates are unclear, surface the conflict rather than resolving it silently.
+
+---
+
+# Synthesis Requirements
+
+Do not summarize source material. Synthesize.
+
+Report what changed, what matters now, where risk is increasing, where alignment is breaking down, where leadership must intervene, what decisions remain unresolved, what is overloaded or under-owned, and where execution confidence is weak.
+
+Cover only the angles with real signal this run. An angle with nothing to report is omitted, not filled.
+
+**Every major synthesis evaluates four axes** — and says nothing about an axis that did not move:
+
+| Axis | Question |
+|---|---|
+| Ownership | Clear? Overloaded? Single-threaded? Diffused? |
+| Alignment | Product/Eng/Design aligned? Priorities drifting? Dependencies understood? |
+| Execution confidence | Milestones credible? Blockers resolving? Trend? |
+| Organizational health | Is the leader a bottleneck? Are decisions fast enough? |
+
+## Delta-based synthesis
+
+Report what changed since the last run. Avoid re-reporting unchanged information.
+
+An unchanged item appears only if it is strategically important, unresolved and becoming chronic, or still needs intervention.
+
+---
+
+# Trend and Confidence
+
+**Trend** has exactly five states: \`New\` · \`Increasing\` · \`Stable\` · \`Decreasing\` · \`Resolved\`.
+
+Render as a token in a table cell or a \`trend:\` field. Never expand into a phrase. See the output contract §3.
+
+- Do not mark \`Increasing\` unless signal materially worsened.
+- Do not mark \`Resolved\` without evidence of closure.
+- Do not mark \`New\` if the entity already exists.
+- When trend changes, give the reason in one clause.
+
+**Confidence** reflects longitudinal signal strength, not certainty. Render as the bare label:
+
+| Label | Meaning |
+|---|---|
+| High | repeated across multiple weeks and sources; recurring executive visibility |
+| Medium | recurring but not stabilized |
+| Low | early signal; needs validation |
+
+---
+
+# Cadence Tracking
+
+\`work/dashboard.md\` tracks work cadences. \`home/dashboard.md\` tracks home cadences. Home cadences never appear in the work dashboard.
+
+| Command | Expected | Tracked in |
+|---|---|---|
+| \`/sync\` | daily (2–3×) | work |
+| \`/scan risks\` | monthly | work |
+| \`/scan team\` | monthly | work |
+| \`/scan patterns\` | monthly | work |
+| \`/scan retro\` | 2× per year | work |
+| \`/prep goal-plan\` | annual | work |
+| \`/prep reflect\` | weekly | work |
+| \`/prep life-reflect\` | weekly | home |
+| \`/prep life-goals\` | semi-annual | home |
+| \`/scan life-patterns\` | quarterly | home |
+
+Event-driven commands (\`/brief\`, \`/prep <person>\`, \`/prep <meeting>\`, \`/scan program\`) run when needed and are not tracked.
+
+**Status is computed by the \`cadence-status\` skill**, never by hand. \`/sync\` runs it after refreshing each \`Last Run\`. The rule lives in that skill.
+
+---
+
+# Outcome Tracking
+
+cosmos tracks open→closed, and also closed→outcome.
+
+When a risk resolves or a decision closes, the archived file carries an \`## Outcome\` section. It is first stamped \`_Pending verification — check back <date>_\`, then resolved by \`/sync\` to \`Landed as intended\` / \`Partial / with issues\` / \`Reopened / backfired\` / \`Still pending\`, with evidence.
+
+A closure that did not hold reopens the entity and surfaces loudly. Recurring outcome shapes feed \`work/executive-patterns.md\`. Briefs and scans may cite verified outcomes as evidence.
+
+---
+
+# Naming and Frontmatter
+
+## Canonical naming
+
+Persistent entities use canonical Obsidian wikilinks: \`[[Beverly]]\`, \`[[Atlas]]\`, \`[[Content Modeling]]\`. Full rules in \`.cosmos/instructions/canonical-naming.md\`.
+
+\`.cosmos/instructions/canonical-entity-index.md\` is derived from disk, regenerated by the \`canonical-entity-index\` skill on every \`/sync\` that creates, archives, or renames an entity.
+
+## File naming
+
+Dated journal artifacts use \`MMDDYY-topic.md\`.
+
+\`\`\`
+journal/briefs/051426-brief-vp.md
+journal/briefs/atlas/051426-brief-vp-atlas.md
+journal/scans/051426-scan-risks.md
+journal/meetings/1on1s/<person>/MMDDYY-<person>-1on1.md
+journal/meetings/<meeting>/MMDDYY-<meeting>.md
+\`\`\`
+
+Scoped briefs go in \`journal/briefs/<topic>/\`. Portfolio briefs go directly in \`journal/briefs/\`.
+
+Claude-created files use kebab-case. Human inbox drops can use any readable format.
+
+**Hard rule:** a wikilink target must match the filename exactly.
+
+## Frontmatter
+
+Include relationship frontmatter when relevant:
+
+\`\`\`yaml
+owner:
+program:
+systems:
+domains:
+related_risks:
+related_decisions:
+meetings:
+trend:
+status:
+\`\`\`
+
+Wikilinks in frontmatter must be quoted.
+
+---
+
+# Inbox Notes
+
+The inbox is the real-time observation layer — what the operator heard directly, before it reaches shared documents.
+
+Use for resolutions, new blockers, verbal decisions, escalations, new risks, milestones, and operationally relevant observations.
+
+| \`note-type\` | Meaning |
+|---|---|
+| \`resolution\` | something previously open is now resolved |
+| \`observation\` | operationally relevant observation |
+| \`blocker\` | blocker not in shared docs yet |
+| \`decision\` | decision made but not formalized |
+| \`escalation\` | something was or needs to be escalated |
+| \`risk\` | new risk not yet in \`work/risks/\` |
+| \`milestone\` | meaningful milestone reached |
+
+Frontmatter fields: \`note-type\` · \`owner\` · \`programs\` · \`systems\` · \`domains\` · \`people\` · \`related_risks\` · \`related_decisions\` · \`related_updates\` · \`meetings\` · \`source\` · \`save-source\` · \`supersedes_source\`.
+
+**Status.** \`active\` is the default. \`complete\` means done regardless of open tasks. \`archived\` is set by \`/sync\` after incorporation.
+
+**Archiving is decided by the \`inbox-archive-tabulation\` skill**, not by reading interpretation. It counts checkbox state inside \`## Follow-Up Needed\` and emits an archive/hold verdict. If narrative and tabulation disagree, the tabulation wins. This rule exists because reading interpretation of checkbox state has caused wrong archival decisions before.
+
+the operator never needs to archive manually.
+
+---
+
+# Cross-Artifact Linking
+
+Reference related artifacts as **pointers**, never as re-narration:
+
+- Risks reference decision logs
+- 1:1 prep references org-health and ownership-map
+- Briefs reference active risks and program files
+- Scans reference persistent risk files
+- Decisions reference risks, programs, impacted teams
+
+A pointer is a wikilink or an embed. It is never a second paragraph restating the fact. See the output contract §5.`;
+}
+
+function genPrimarySources() {
+  const sources = primarySourcesBody();
+  return `# Primary Sources
+
+The highest-signal documents \`/sync\` pulls from. Read this file at the start of a \`/sync\` run.
+
+Each entry has a link, a \`Reading:\` hint, and what it is useful for.
+
+## Reading hints
+
+\`\`\`
+Reading:
+  start: top       # top = newest content first; bottom = newest last
+  depth: 4 weeks   # N weeks | N entries | N slides
+\`\`\`
+
+For Confluence parents whose weekly notes are separate child pages, use \`structure: child-pages\` with a \`depth\`; \`start:\` is then ignored.
+
+**If a hint is present, use it.** If absent, flag it in the sync receipt and fall back to: Google Docs — top, 4 weeks; Google Slides — top, 20 slides; Confluence single-page — latest dated section by heading scan.
+
+## Tool selection — mandatory
+
+Never use WebFetch for these. It cannot reach Google or Confluence and returns 401.
+
+| Source | Tool |
+|---|---|
+| Google Docs / Slides | Google Drive MCP — \`read_file_content\` |
+| Confluence | Atlassian MCP — \`getConfluencePage\` or \`fetch\` |
+| Google Calendar | Google Calendar MCP — \`list_events\` |
+
+---
+
+${sources}
+`;
+}
+
+function genIndex() {
+  const today = new Date().toISOString().slice(0, 10);
+  const peopleEntries = [];
+  if (state.yourName) peopleEntries.push(state.yourName);
+  if (state.svp) peopleEntries.push(state.svp);
+  if (state.vp) peopleEntries.push(state.vp);
+  if (state.director) peopleEntries.push(state.director);
+  if (state.manager) peopleEntries.push(state.manager);
+  state.teamMembers.forEach(m => { if (!peopleEntries.includes(m)) peopleEntries.push(m); });
+
+  const section = (heading, items, emptyHint) => {
+    const lines = [`# ${heading}`, ''];
+    if (items.length === 0) {
+      lines.push(`_(${emptyHint})_`);
+    } else {
+      items.forEach(item => lines.push(`- [[${item}]]`));
+    }
+    lines.push('', '---', '');
+    return lines.join('\n');
+  };
+
+  return [
+    '# Canonical Entity Index',
+    '',
+    'This file is the source of truth for entity names in your cosmos vault.',
+    '',
+    '**It is regenerated automatically by cosmos commands — do not edit by hand.**',
+    '',
+    'To add an entity, create the entity file (e.g. `work/programs/<name>.md`, `people/<name>.md`) or update `CLAUDE.md` frontmatter (for leadership chain and direct reports). The next `/sync` run will regenerate this index.',
+    '',
+    'The regeneration algorithm lives in `.cosmos/instructions/canonical-entity-index-rebuild.md`. `/sync` is the only command that triggers regeneration.',
+    '',
+    `Last regenerated: ${today} by setup wizard`,
+    '',
+    '---',
+    '',
+    section('People', peopleEntries, 'no people seeded yet'),
+    section('Programs', state.programs, 'none yet — populated as programs are added'),
+    section('Systems', state.systems, 'none yet — populated as systems are added'),
+    section('Domains', state.domains, 'none yet — populated as domains are added'),
+    section('Teams', [], 'none yet — populated as `people/teams/*.md` files are created'),
+    section('Meetings', [], 'none yet — populated as `work/meetings/*.md` files are created'),
+    section('Risks', [], 'none yet — populated as `/sync` creates files in `work/risks/`'),
+    section('Decisions', [], 'none yet — populated as `/sync` creates files in `work/decisions/`'),
+    `# Goals\n\n_(none yet — populated as \`/sync\` and \`/prep goal-plan\` produce files in \`work/goals/\`)_\n`,
+  ].join('\n');
+}
+
+// ─── Render steps ─────────────────────────────────────────────────────────────
+const STEPS = [
+  { label: '00', title: 'Welcome to cosm<span style="color:var(--accent)">os</span>', desc: '' },
+  { label: '01', title: 'Identity', desc: 'Tell cosmos who you are and what organization you operate within.' },
+  { label: '02', title: 'Your Team', desc: 'Add the people cosmos will reference. Full names become canonical [[wikilink]] entities.' },
+  { label: '03', title: 'Programs', desc: 'Active initiatives cosmos should track. Each becomes a [[Program]] entity node.' },
+  { label: '04', title: 'Systems & Domains', desc: 'Technical platforms and product domains that appear in risks, decisions, and dependencies.' },
+  { label: '05', title: 'Primary Sources', desc: 'Documents, Confluence pages, or Google Docs cosmos pulls from as first-priority signal sources.' },
+  { label: '06', title: 'Generate Files', desc: 'Your personalized CLAUDE.md is ready. Copy and drop it into the root of your cosmos repo.' },
+];
+
+function renderStep() {
+  const main = el('mainContent');
+  const s = STEPS[state.step];
+
+  const navButtons = `
+    <div class="step-nav">
+      <button class="btn" onclick="prev()" ${state.step === 0 ? 'style="visibility:hidden"' : ''}>← Back</button>
+      <span class="step-progress">${state.step + 1} / ${STEPS.length}</span>
+      ${state.step < STEPS.length - 1
+        ? `<button class="btn btn-primary" onclick="next()">Continue →</button>`
+        : `<button class="btn btn-primary" onclick="window.close ? window.close() : null">Done</button>`
+      }
+    </div>
+  `;
+
+  let content = '';
+
+  if (state.step === 0) {
+    content = `
+      <div class="intro-grid">
+        <div class="intro-card">
+          <div class="intro-card-label">What it is</div>
+          <div class="intro-card-text">An AI-powered Chief of Staff layer for leaders who need organizational intelligence at scale.</div>
+        </div>
+        <div class="intro-card">
+          <div class="intro-card-label">What you'll get</div>
+          <div class="intro-card-text">A personalized CLAUDE.md ready to drop into your repo, plus a seed canonical-entity-index.md so /sync can keep your graph current.</div>
+          <div class="intro-card-label" style="margin-top: 14px;">Time required</div>
+          <div class="intro-card-text">~5 minutes. You can update sources and team members anytime by re-running this wizard.</div>
+        </div>
+      </div>
+
+      <div class="notice info" style="margin-top: 28px; margin-bottom: 16px;">
+        <div class="notice-icon">ℹ</div>
+        <div>Open your cosmos folder as an Obsidian vault, then open this file in a browser (<strong>right-click → Open in default browser</strong>). Complete the wizard, copy the output files, and you're live.</div>
+      </div>
+
+      <div class="notice warn" style="margin-top: 0;">
+        <div class="notice-icon">⚠</div>
+        <div>This file runs entirely locally. Nothing is sent anywhere. Your data stays in this browser tab.</div>
+      </div>
+    `;
+  }
+
+  else if (state.step === 1) {
+    content = `
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Your full name</label>
+          <div class="field-hint">Becomes the Operator entity across all artifacts.</div>
+          <input type="text" value="${state.yourName}" oninput="saveField('yourName',this.value)" placeholder="Geordi La Forge" />
+        </div>
+        <div class="field">
+          <label class="field-label">Your role</label>
+          <div class="field-hint">Appears in the operator line of your CLAUDE.md.</div>
+          <input type="text" value="${state.yourRole}" oninput="saveField('yourRole',this.value)" placeholder="Sr. Director, Product Management" />
+        </div>
+      </div>
+      <div class="field">
+        <label class="field-label">Organization / team name</label>
+        <div class="field-hint">Short name used throughout reports — e.g. CMS, Platform, Growth.</div>
+        <input type="text" value="${state.orgName}" oninput="saveField('orgName',this.value)" placeholder="CMS" />
+      </div>
+      <hr class="section-divider">
+      <div class="section-label">Leadership chain</div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">SVP / exec above VP</label>
+          <div class="field-hint">Top of your reporting chain.</div>
+          <input type="text" value="${state.svp}" oninput="saveField('svp',this.value)" placeholder="Jean-Luc Picard" />
+        </div>
+        <div class="field">
+          <label class="field-label">VP name (full name)</label>
+          <div class="field-hint">Will become [[VP Name]] in updates and entity graph.</div>
+          <input type="text" value="${state.vp}" oninput="saveField('vp',this.value)" placeholder="Deanna Troi" />
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label">Director name (full name)</label>
+          <div class="field-hint">Your direct manager or skip-level director.</div>
+          <input type="text" value="${state.director}" oninput="saveField('director',this.value)" placeholder="William Riker" />
+        </div>
+        <div class="field">
+          <label class="field-label">Manager name (full name)</label>
+          <div class="field-hint">Direct reports manager, if applicable.</div>
+          <input type="text" value="${state.manager}" oninput="saveField('manager',this.value)" placeholder="Beverly Crusher" />
+        </div>
+      </div>
+    `;
+  }
+
+  else if (state.step === 2) {
+    content = `
+      <div class="field">
+        <label class="field-label">Team members</label>
+        <div class="field-hint">Include anyone in 1:1 prep, org health, or ownership tracking. Press Enter or click Add.</div>
+        ${tagList('teamMembers', 'Full name, e.g. Wesley Crusher')}
+      </div>
+    `;
+  }
+
+  else if (state.step === 3) {
+    content = `
+      <div class="field">
+        <label class="field-label">Programs / initiatives</label>
+        ${tagList('programs', 'e.g. Convergence, Caraz, Titan Launch')}
+      </div>
+    `;
+  }
+
+  else if (state.step === 4) {
+    content = `
+      <div class="field">
+        <label class="field-label">Systems</label>
+        <div class="field-hint">Technical platforms — APIs, tools, infrastructure.</div>
+        ${tagList('systems', 'e.g. AMLG, Summit, Drupal, CMS API')}
+      </div>
+      <hr class="section-divider">
+      <div class="field">
+        <label class="field-label">Domains</label>
+        <div class="field-hint">Functional or product domains your team owns or intersects with.</div>
+        ${tagList('domains', 'e.g. Content Management, Distribution, Monetization')}
+      </div>
+    `;
+  }
+
+  else if (state.step === 5) {
+    content = `
+      ${sourceRows()}
+      <button class="btn btn-add" onclick="addSource()">+ Add source</button>
+    `;
+  }
+
+  else if (state.step === 6) {
+    const claude = genCLAUDE();
+    const sources = genPrimarySources();
+    const index = genIndex();
+    const fsaSupported = supportsFileSystemAccess();
+    const saveCta = fsaSupported
+      ? `
+        <div class="save-all-cta">
+          <button class="btn btn-primary btn-full" id="saveAllBtn" onclick="saveAllToVault('saveAllBtn')">
+            Save both files to my cosmos folder
+          </button>
+          <p class="cta-hint">Pick your repo root — files are written to the right paths automatically. Works in Chrome, Edge, and Opera.</p>
+        </div>`
+      : `
+        <div class="save-all-cta">
+          <p class="cta-hint">Your browser doesn't support direct save — use the <strong>Download</strong> button on each file below to save individually, or <strong>Copy</strong> to paste manually. (Direct save is available in Chrome, Edge, and Opera.)</p>
+        </div>`;
+
+    content = `
+      <div class="notice info">
+        <div class="notice-icon">→</div>
+        <div>
+          <strong>Two files for your cosmos repo:</strong>
+          <ol class="notice-list">
+            <li><code>CLAUDE.md</code> → repo root. <strong>Required.</strong> Claude reads this at the start of every session. Includes your leadership chain and team as YAML frontmatter so the entity index can be auto-maintained.</li>
+            <li><code>canonical-entity-index.md</code> → <code>.cosmos/instructions/</code>. <strong>Recommended.</strong> Seeds the entity index — <code>/sync</code> regenerates it from here on.</li>
+            <li><code>primary-sources.md</code> → <code>.cosmos/instructions/</code>. The documents <code>/sync</code> reads. Safe to edit any time.</li>
+          </ol>
+        </div>
+      </div>
+
+      ${saveCta}
+
+      <div class="output-file">
+        <div class="output-file-header">
+          <div class="output-filename">CLAUDE.md <span class="file-badge">root of repo</span></div>
+          <div class="file-actions">
+            <button class="btn copy-btn" onclick="downloadClaude()">Download</button>
+            <button class="btn copy-btn" id="copyBtn1" onclick="copyText('claude_out','copyBtn1')">Copy</button>
+          </div>
+        </div>
+        <div class="output-desc">Primary instruction file. Claude reads this at the start of every session.</div>
+        <pre id="claude_out">${claude.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      </div>
+
+      <div class="output-file">
+        <div class="output-file-header">
+          <div class="output-filename">canonical-entity-index.md <span class="file-badge">.cosmos/instructions/</span></div>
+          <div class="file-actions">
+            <button class="btn copy-btn" onclick="downloadIndex()">Download</button>
+            <button class="btn copy-btn" id="copyBtn3" onclick="copyText('index_out','copyBtn3')">Copy</button>
+          </div>
+        </div>
+        <div class="output-desc">Initial seed for the canonical entity index. <code>/sync</code> regenerates this file as new entities are added — do not hand-edit going forward.</div>
+        <pre id="index_out">${index.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      </div>
+
+      <div class="output-file">
+        <div class="output-file-header">
+          <div class="output-filename">primary-sources.md <span class="file-badge">.cosmos/instructions/</span></div>
+          <div class="file-actions">
+            <button class="btn copy-btn" onclick="downloadPrimarySources()">Download</button>
+            <button class="btn copy-btn" id="copyBtn4" onclick="copyText('sources_out','copyBtn4')">Copy</button>
+          </div>
+        </div>
+        <div class="output-desc">The documents <code>/sync</code> pulls from. v2 keeps these in their own file rather than inside CLAUDE.md, so you can edit sources without touching the operating instructions.</div>
+        <pre id="sources_out">${sources.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</pre>
+      </div>
+    `;
+  }
+
+  main.innerHTML = `
+    <div class="step-header" style="margin-bottom:0">
+      <div class="step-label">${s.label}</div>
+      <h1 class="step-title">${s.title}</h1>
+      ${s.desc ? `<p class="step-desc">${s.desc}</p>` : ''}
+    </div>
+    <div style="margin-top: 32px">${content}</div>
+    ${navButtons}
+  `;
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────────────────
+renderNav();
+renderStep();
+</script>
+</body>
+</html>

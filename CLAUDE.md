@@ -123,7 +123,9 @@ Writes `work/dashboard.md`, `work/org-health.md`, `work/ownership-map.md`, `work
 
 Read-only on persistent state. Produces an artifact the operator opens in Obsidian and lives in during the event.
 
-Modes: `<person>` (1:1) · `<meeting>` · `calibration <person>` · `reflect` · `goal-plan` · `day <today|tomorrow>` · `life-reflect` · `life-goals`.
+Modes: `<person>` (1:1) · `<meeting>` · `calibration <person>` · `calibration self` · `growth-plan` · `reflect` · `goal-plan` · `day <today|tomorrow>` · `life-reflect` · `life-goals`.
+
+`calibration <person>` rates a report against the ladder. `calibration self` and `growth-plan` turn the same rubric on the operator — cosmos does not assume its user manages people.
 
 ## `/brief <level> [topic]` — upward output
 
@@ -253,6 +255,7 @@ Render as a token in a table cell or a `trend:` field. Never expand into a phras
 | `/scan patterns` | monthly | work |
 | `/scan retro` | 2× per year | work |
 | `/prep goal-plan` | annual | work |
+| `/prep growth-plan` | quarterly | work |
 | `/prep reflect` | weekly | work |
 | `/prep life-reflect` | weekly | home |
 | `/prep life-goals` | semi-annual | home |

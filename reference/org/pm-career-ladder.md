@@ -23,9 +23,17 @@ A level-by-level definition of expectations. At minimum, for each level:
 - **Craft / technical depth** — what "good" looks like in the work itself
 - **People impact** — how they raise the people around them
 
-## Companion file
+## Companion files
 
-`reference/org/pm-calibration-template.md` is the output shape `/prep calibration` fills in. That one is generic and ready to use — it does not need editing.
+Three output shapes hang off this ladder. All are generic and ready to use — none need editing.
+
+| File | Audience | Filled by |
+|---|---|---|
+| `pm-calibration-template-manager.md` | Managers calibrating a report | `/prep calibration <person>` |
+| `pm-calibration-template-self.md` | Anyone calibrating themselves | `/prep calibration self` |
+| `pm-growth-plan-template.md` | Anyone planning their next cycle | `/prep growth-plan` |
+
+The self template mirrors the manager one axis for axis, so a self read and a manager read are directly comparable — where they diverge is the conversation worth having.
 
 ## A note on using it
 
