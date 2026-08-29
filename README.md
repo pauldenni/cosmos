@@ -2,7 +2,7 @@
 
 An AI-assisted Chief of Staff operating system for leaders and operators, running on Claude Code inside an Obsidian vault.
 
-This is a **fresh v2 install** — the full operating system with no content. Every folder is empty and waiting.
+This is a **fresh install** — the full operating system with no content. Every folder is empty and waiting.
 
 ---
 
@@ -114,7 +114,7 @@ That verdict is a feature. It also fires when the ladder is real but the record 
 
 `.cosmos/instructions/output-contract.md` is the authority on length and style, and it wins over any command file or template.
 
-It exists because of a measured failure. In the vault this was extracted from, artifacts had grown 4–10× too long: a 30-word ask restated six times across six sections of one 1:1 prep, a "dashboard" at 4,048 words, a program file that was 88% changelog. The cause was structural — every template had 6–13 mandatory sections and no word budget, so **length tracked template shape rather than how much actually happened**.
+It exists to prevent a specific failure mode: templates with many mandatory sections and no word budget let a 30-word ask get restated six times across six sections of one 1:1 prep, a "dashboard" balloon past 4,000 words, or a program file turn 88% changelog. Without a cap, **length tracks template shape rather than how much actually happened**.
 
 What the contract enforces:
 
@@ -156,7 +156,7 @@ python3 .claude/skills/cosmos-scheduler/list_sources.py       # the pre-flight l
 
 ### Four things that will bite you
 
-Learned the hard way; all four are already handled in this install.
+All four are already handled in this install — worth understanding why, before you touch the automation.
 
 1. **Never let a task improvise shell commands.** A command containing shell expansion (`for d in journal/scans/*/`) can only ever be granted *"allow once"* — Claude Code will not write a persistent permission rule for it, so an unattended run stalls forever on a prompt nobody is awake to answer. That's why the pre-flight listing is `list_sources.py` and not a prose instruction.
 
